@@ -4,7 +4,7 @@ use inventario;
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   usuario VARCHAR(20) NOT NULL UNIQUE,
-  contraseña VARCHAR(20) NOT NULL,
+  passwd VARCHAR(20) NOT NULL,
   tipo ENUM('Administrador','Normal') NOT NULL
 );
 
@@ -21,6 +21,7 @@ CREATE TABLE producto (
   tipo_fk INT NOT NULL,
   categoria VARCHAR(15),
   observacion VARCHAR(50),
+  estado ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
   CONSTRAINT fk_producto_tipoproducto
     FOREIGN KEY (tipo_fk) REFERENCES tipoproducto(id)
 );
@@ -34,4 +35,5 @@ CREATE TABLE movimientos (
   CONSTRAINT fk_movimientos_producto
     FOREIGN KEY (producto_fk) REFERENCES producto(codigo)
 );
-INSERT INTO usuarios (usuario,contraseña,tipo) VALUES ('root', 123,'Administrador');
+
+INSERT INTO usuarios (usuario,passwd,tipo) VALUES ('root', 123,'Administrador');

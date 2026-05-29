@@ -18,13 +18,17 @@ public class UsuarioDAO {
     Conexión.ConexiónBD cn = new ConexiónBD(); //Llamamos la conexión a la BD
     java.sql.Connection con = cn.conectar(); //Hacemos la conexión
     public boolean validarLogin(Usuarios u){ // Función para validar el acceso (Login)
-        String sql = "SELECT * FROM usuarios WHERE usuario=? AND contraseña=?"; //Sentencia para la consulta.
+        String sql = "SELECT * FROM usuarios WHERE usuario=? AND passwd=?"; //Sentencia para la consulta.
         try {
             PreparedStatement ps = con.prepareStatement(sql); //Preparamos la consulta
             ps.setString(1, u.getUsuario()); //Agregamos a la consulta el usuario
             ps.setString(2, u.getContraseña()); //Agregamos a la consulta la contraseña
             ResultSet rs = ps.executeQuery(); //Ejecutamos la consulta
-            return rs.next(); //Retornamos lo obtenido.
+            if(rs.next()){
+                u.setTipo(rs.getString("tipo"));
+                return true;
+            }
+            return false;
         } catch (Exception e) { //En caso de error
             System.out.println(e); //Imprimimos el error
             return false; //Retornamos falso
@@ -32,7 +36,7 @@ public class UsuarioDAO {
     }
     
     public boolean registrarUsuario(Usuarios u){
-        String sql = "INSERT INTO usuarios (usuario, contraseña, tipo) VALUES(?,?,?)"; //Sentencia sql
+        String sql = "INSERT INTO usuarios (usuario, passwd, tipo) VALUES(?,?,?)"; //Sentencia sql
         try {
             PreparedStatement ps = con.prepareStatement(sql); //Preparamos la consulta
             ps.setString(1, u.getUsuario()); //Obtenemos los datos de la clase y la colocamos en la sentencia
@@ -46,7 +50,7 @@ public class UsuarioDAO {
         }
     }
     public boolean editarUsuarioPorUsuario(Usuarios u){
-        String sql = "UPDATE usuarios SET contraseña=?, tipo=? WHERE usuario=?";
+        String sql = "UPDATE usuarios SET passwd=?, tipo=? WHERE usuario=?";
         try (
             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, u.getContraseña());
@@ -74,7 +78,7 @@ public class UsuarioDAO {
     
     public java.util.List<Usuarios> listarUsuarios() {
         java.util.List<Usuarios> lista = new java.util.ArrayList<>();
-        String sql = "SELECT id, usuario, contraseña, tipo FROM usuarios";
+        String sql = "SELECT id, usuario, passwd, tipo FROM usuarios";
         try (
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()) {
@@ -83,7 +87,7 @@ public class UsuarioDAO {
                 Usuarios u = new Usuarios();
                 u.setId(rs.getInt("id"));
                 u.setUsuario(rs.getString("usuario"));
-                u.setContraseña(rs.getString("contraseña"));
+                u.setContraseña(rs.getString("passwd"));
                 u.setTipo(rs.getString("tipo"));
                 lista.add(u);
             }

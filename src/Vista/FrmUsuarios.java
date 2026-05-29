@@ -6,6 +6,8 @@ package Vista;
 
 import Controlador.ControladorUsuarios;
 import Modelo.Usuarios;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -22,6 +24,7 @@ public class FrmUsuarios extends javax.swing.JFrame {
     public FrmUsuarios() {
         initComponents();
         setTitle("Inventra | Gestión Usuarios | ");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
         ControladorUsuarios cu = new ControladorUsuarios(this);
@@ -129,7 +132,16 @@ public class FrmUsuarios extends javax.swing.JFrame {
             new String [] {
                 "Usuario", "Contraseña", "Tipo"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblUsuarios.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblUsuariosMouseClicked(evt);
@@ -179,11 +191,23 @@ public class FrmUsuarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        int fila = tblUsuarios.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un usuario para poder eliminarlo");
+            return;
+        }
+        String usuario = tblUsuarios.getValueAt(fila, 0).toString();
         Controlador.ControladorUsuarios cu = new Controlador.ControladorUsuarios(this);
-        cu.eliminarUsuario(txtUsuarios.getText());
+        cu.eliminarUsuario(usuario);
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        String usuario = txtUsuarios.getText().trim();
+        String pass = txtContraseña.getText().trim();
+        if(usuario.isEmpty() || pass.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Para modificar debe ingresar el usuario y la contraseña no puede ser vacia");
+            return;
+        }
         Controlador.ControladorUsuarios cu = new Controlador.ControladorUsuarios(this);
         cu.editarUsuario(txtUsuarios.getText(),txtContraseña.getText(),cbTipo.getSelectedItem().toString());
     }//GEN-LAST:event_btnEditarActionPerformed

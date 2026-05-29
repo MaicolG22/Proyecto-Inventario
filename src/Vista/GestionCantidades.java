@@ -4,6 +4,12 @@
  */
 package Vista;
 
+import Controlador.ControladorProductos;
+import Modelo.Producto;
+import Modelo.TipoProducto;
+import Modelo.TipoProductoDAO;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author USUARIO
@@ -18,6 +24,7 @@ public class GestionCantidades extends javax.swing.JFrame {
     public GestionCantidades() {
         initComponents();
         setTitle("Inventra | Movimiento de Inventario | ");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
         jpSalida.setEnabled(false);
@@ -27,7 +34,56 @@ public class GestionCantidades extends javax.swing.JFrame {
         txtCantEntrada.setEnabled(false);
         txtObservacionEntrada.setEnabled(false);
     }
-
+    
+    public void MostrarCombo(){
+        TipoProductoDAO dao=new TipoProductoDAO();
+        TipoProducto todos = new TipoProducto();
+        todos.setId(0);
+        todos.setNombre("");
+        for(TipoProducto tipo : dao.ListarTipos()){ //Recorremos todos los resultados
+            cbTipo.addItem(tipo);
+        }
+    }
+    public void buscar(String codigo){
+        Controlador.ControladorProductos p = new ControladorProductos();
+        if(txtCodigo.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Debe agregar el código de un producto para buscar");
+            return;
+        }
+        Producto producto = p.BuscarProductoCodigo(codigo);
+        if(producto == null){
+            JOptionPane.showMessageDialog(null, "Producto no encontrado");
+            return;
+        }
+        cargarProducto(producto);
+    }
+    
+    
+    public void cargarProducto(Producto pro){
+        txtCodigo.setText(pro.getCodigo());
+        txtNombre.setText(pro.getNombre());
+        txtCantidad.setText(String.valueOf(pro.getCantidad()));
+        txtObservacion.setText(pro.getObservacion());
+        if(pro.getCategoria().equals("Normal")){
+            rbNormal.setSelected(true);
+        }else{
+            rbEspecial.setSelected(true);
+        }
+        for(int i = 0; i < cbTipo.getItemCount(); i++){
+            TipoProducto tipo = cbTipo.getItemAt(i);
+            if(tipo.toString().equals(pro.getTiponombre())){
+                cbTipo.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+    
+    public void limpiar(){
+        txtNombre.setText("");
+        txtCantidad.setText("");
+        txtObservacion.setText("");
+        buttonGroup1.clearSelection();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,15 +97,19 @@ public class GestionCantidades extends javax.swing.JFrame {
         buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtCodigo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbTipo = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jButton5 = new javax.swing.JButton();
+        rbNormal = new javax.swing.JRadioButton();
+        rbEspecial = new javax.swing.JRadioButton();
+        btnBuscar = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        txtObservacion = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jpEntrada = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -64,10 +124,11 @@ public class GestionCantidades extends javax.swing.JFrame {
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbMovimiento = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -79,41 +140,77 @@ public class GestionCantidades extends javax.swing.JFrame {
         jLabel1.setText("Nombre producto");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 20, -1, -1));
 
-        jTextField1.setEnabled(false);
-        jPanel2.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 40, 300, -1));
+        txtNombre.setEditable(false);
+        txtNombre.setEnabled(false);
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreActionPerformed(evt);
+            }
+        });
+        jPanel2.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 40, 350, -1));
 
         jLabel2.setText("Codigo producto");
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
-        jPanel2.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 150, -1));
+
+        txtCodigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCodigoActionPerformed(evt);
+            }
+        });
+        txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodigoKeyPressed(evt);
+            }
+        });
+        jPanel2.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 140, -1));
 
         jLabel3.setText("Tipo");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 20, -1, -1));
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
-        jComboBox1.setEnabled(false);
-        jPanel2.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, 170, -1));
+        jPanel2.add(cbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 200, -1));
 
         jLabel7.setText("Categoria");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 20, -1, -1));
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Normal");
-        jRadioButton3.setEnabled(false);
-        jPanel2.add(jRadioButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 42, -1, -1));
+        buttonGroup1.add(rbNormal);
+        rbNormal.setText("Normal");
+        rbNormal.setEnabled(false);
+        jPanel2.add(rbNormal, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 42, -1, -1));
 
-        buttonGroup1.add(jRadioButton4);
-        jRadioButton4.setText("Especial");
-        jRadioButton4.setEnabled(false);
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(rbEspecial);
+        rbEspecial.setText("Especial");
+        rbEspecial.setEnabled(false);
+        rbEspecial.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                rbEspecialActionPerformed(evt);
             }
         });
-        jPanel2.add(jRadioButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 42, -1, -1));
+        jPanel2.add(rbEspecial, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 42, -1, -1));
 
-        jButton5.setText("Buscar");
-        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 70, 80, -1));
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 90, 140, -1));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 110));
+        jLabel9.setText("Cantidad Actual");
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, -1, -1));
+
+        txtCantidad.setEditable(false);
+        txtCantidad.setEnabled(false);
+        txtCantidad.setFocusable(false);
+        jPanel2.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 40, 100, -1));
+
+        jLabel10.setText("Observación:");
+        jPanel2.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 70, -1, -1));
+
+        txtObservacion.setEditable(false);
+        txtObservacion.setEnabled(false);
+        jPanel2.add(txtObservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 90, 410, -1));
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 140));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Gestion Cantidades"));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -135,14 +232,14 @@ public class GestionCantidades extends javax.swing.JFrame {
         jpSalida.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel5.setText("Cantidad salida");
-        jpSalida.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 18, -1, -1));
+        jpSalida.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 20, -1, -1));
         jpSalida.add(txtCantSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 102, -1));
 
         jLabel8.setText("Observación");
-        jpSalida.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(142, 18, -1, -1));
+        jpSalida.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(142, 20, -1, -1));
         jpSalida.add(txtObservacionSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 240, -1));
 
-        jPanel1.add(jpSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 60, 390, 80));
+        jPanel1.add(jpSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 60, 390, 80));
 
         buttonGroup2.add(jRadioButton1);
         jRadioButton1.setText("Entrada");
@@ -151,7 +248,7 @@ public class GestionCantidades extends javax.swing.JFrame {
                 jRadioButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, -1));
+        jPanel1.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 80, -1));
 
         buttonGroup2.add(jRadioButton2);
         jRadioButton2.setText("Salida");
@@ -160,48 +257,64 @@ public class GestionCantidades extends javax.swing.JFrame {
                 jRadioButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, -1, -1));
+        jPanel1.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 70, -1));
 
-        jButton1.setText("Realizara el movimiento");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 30, -1, -1));
+        jButton1.setText("Realizar movimiento");
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 30, 160, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 116, 808, 150));
-
-        jButton2.setText("Regresar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 440, -1, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 146, 820, 150));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Movimientos"));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbMovimiento.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
                 "Codigo", "Nombre", "Tipo Movimiento", "Cantidad", "Observación"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 780, 130));
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbMovimiento.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbMovimiento.setEnabled(false);
+        tbMovimiento.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbMovimiento.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tbMovimiento);
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 800, 160));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 800, 190));
+
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 300, 820, 220));
+
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnRegresar.setText("Regresar");
+        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 530, 100, -1));
+
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 570));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    private void rbEspecialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEspecialActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+    }//GEN-LAST:event_rbEspecialActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnRegresarActionPerformed
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
         jpEntrada.setEnabled(true);
@@ -224,6 +337,22 @@ public class GestionCantidades extends javax.swing.JFrame {
         txtCantEntrada.setEnabled(false);
         txtObservacionEntrada.setEnabled(false);
     }//GEN-LAST:event_jRadioButton2ActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        buscar(txtCodigo.getText());
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
+        btnBuscar.doClick();
+    }//GEN-LAST:event_txtCodigoActionPerformed
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void txtCodigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyPressed
+        limpiar();
+    }//GEN-LAST:event_txtCodigoKeyPressed
 
     /**
      * @param args the command line arguments
@@ -251,13 +380,14 @@ public class GestionCantidades extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnRegresar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JComboBox<TipoProducto> cbTipo;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -265,21 +395,25 @@ public class GestionCantidades extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JPanel jpEntrada;
     private javax.swing.JPanel jpSalida;
+    private javax.swing.JRadioButton rbEspecial;
+    private javax.swing.JRadioButton rbNormal;
+    private javax.swing.JTable tbMovimiento;
     private javax.swing.JTextField txtCantEntrada;
     private javax.swing.JTextField txtCantSalida;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtObservacion;
     private javax.swing.JTextField txtObservacionEntrada;
     private javax.swing.JTextField txtObservacionSalida;
     // End of variables declaration//GEN-END:variables

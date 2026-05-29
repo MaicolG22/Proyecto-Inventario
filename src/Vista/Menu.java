@@ -4,7 +4,11 @@
  */
 package Vista;
 
+import Controlador.ControladorProductos;
+import Modelo.Producto;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -13,15 +17,42 @@ import javax.swing.JOptionPane;
 public class Menu extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Menu.class.getName());
+    private String tipoUsuario;
 
     /**
      * Creates new form Menu
      */
-    public Menu() {
+    public Menu(String tipoUsuario) {
         initComponents();
+        this.tipoUsuario = tipoUsuario;
         setTitle("Inventra | Menu Principal | ");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
+        if(!tipoUsuario.equalsIgnoreCase("ADMINISTRADOR")){
+            jMenu3.setVisible(false);
+        }
+        recargar();
+    }
+    
+    private void recargar(){
+        Controlador.ControladorProductos p = new ControladorProductos();
+        List<Producto> lista = p.BuscadorProductoStock();
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        for(Producto pro : lista){
+            Object[] fila = {
+                pro.getCodigo(),
+                pro.getNombre(),
+                pro.getPrecio(),
+                pro.getCantidad(),
+                pro.getTiponombre(),
+                pro.getCategoria(),
+                pro.getObservacion()
+            };
+            modelo.addRow(fila);
+        }
     }
 
     /**
@@ -40,6 +71,7 @@ public class Menu extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jLabel10 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -73,55 +105,75 @@ public class Menu extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel9.setText("BIENVENIDOS AL MENU PRINCIPAL");
 
+        jTable1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Codigo", "Nombre", "Precio", "Tipo", "Cantidad", "Observación"
+                "Codigo", "Nombre", "Precio", "Cantidad", "Tipo", "Categoria", "Observación"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(jTable1);
 
         jLabel10.setBackground(new java.awt.Color(0, 0, 0));
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel10.setText("Lista de inventario");
+        jLabel10.setText("Listado de productos activos con poco stock");
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/LogoPrincipal.png"))); // NOI18N
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/cargando-flechas.png"))); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(242, 242, 242)
-                        .addComponent(jLabel9)
-                        .addGap(0, 257, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 269, Short.MAX_VALUE)
+                .addComponent(jLabel9)
+                .addGap(236, 236, 236))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel10)
-                .addGap(154, 154, 154)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 540));
@@ -130,6 +182,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu1.setText("Inventario");
         jMenu1.add(jSeparator7);
 
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_1, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/product-review_18098959.png"))); // NOI18N
         jMenuItem3.setText("Productos");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
@@ -140,6 +193,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu1.add(jMenuItem3);
         jMenu1.add(jSeparator1);
 
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_2, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/stages-processing_17551200.png"))); // NOI18N
         jMenuItem1.setText("Movimientos Inventario");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -150,6 +204,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
         jMenu1.add(jSeparator2);
 
+        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_3, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/knowledge_1310161.png"))); // NOI18N
         jMenuItem6.setText("Tipos");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
@@ -171,6 +226,7 @@ public class Menu extends javax.swing.JFrame {
         });
         jMenu2.add(jSeparator5);
 
+        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_4, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/information_17498768.png"))); // NOI18N
         jMenuItem4.setText("Acerca de");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
@@ -181,6 +237,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu2.add(jMenuItem4);
         jMenu2.add(jSeparator3);
 
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_5, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/login_11262311.png"))); // NOI18N
         jMenuItem2.setText("Cerrar sesión");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -191,6 +248,7 @@ public class Menu extends javax.swing.JFrame {
         jMenu2.add(jMenuItem2);
         jMenu2.add(jSeparator4);
 
+        jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_6, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/emergency-exit_4008966 (1).png"))); // NOI18N
         jMenuItem5.setText("Salir");
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
@@ -271,6 +329,10 @@ public class Menu extends javax.swing.JFrame {
         u.setVisible(true);
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        recargar();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -293,10 +355,11 @@ public class Menu extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Menu(null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel9;

@@ -4,6 +4,12 @@
  */
 package Vista;
 
+import Controlador.ControladorProductos;
+import Modelo.Producto;
+import Modelo.TipoProducto;
+import Modelo.TipoProductoDAO;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author USUARIO
@@ -15,11 +21,49 @@ public class Productos extends javax.swing.JFrame {
     /**
      * Creates new form Productos
      */
-    public Productos() {
+    boolean editar;
+    public Productos(boolean editar) {
         initComponents();
+        MostrarCombo();
+        this.editar = editar;
         setTitle("Inventra | Productos | ");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
+        if(editar){
+            jButton2.setText("Actualizar");
+            txtCodigo.setEditable(false);
+        }else{
+            jButton2.setText("Crear");
+        }
+    }
+    
+    public void limpiar(){
+        txtCodigo.setText("");
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        txtCantidad.setText("");
+        txtObservacion.setText("");
+    }
+    
+    public void cargarProducto(Producto pro){
+        txtCodigo.setText(pro.getCodigo());
+        txtNombre.setText(pro.getNombre());
+        txtPrecio.setText(String.valueOf(pro.getPrecio()));
+        txtCantidad.setText(String.valueOf(pro.getCantidad()));
+        txtObservacion.setText(pro.getObservacion());
+        if(pro.getCategoria().equals("Normal")){
+            rbNormal.setSelected(true);
+        }else{
+            rbEspecial.setSelected(true);
+        }
+        for(int i = 0; i < cbTipo.getItemCount(); i++){
+            TipoProducto tipo = cbTipo.getItemAt(i);
+            if(tipo.toString().equals(pro.getTiponombre())){
+                cbTipo.setSelectedIndex(i);
+                break;
+            }
+        }
     }
 
     /**
@@ -34,21 +78,21 @@ public class Productos extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtPrecio = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtCodigo = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtCantidad = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField5 = new javax.swing.JTextField();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
+        cbTipo = new javax.swing.JComboBox<>();
+        txtObservacion = new javax.swing.JTextField();
+        rbNormal = new javax.swing.JRadioButton();
+        rbEspecial = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -59,31 +103,37 @@ public class Productos extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Gestion de Producto"));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel2.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 50, 387, -1));
+        jPanel2.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 50, 387, -1));
 
         jLabel1.setText("Nombre del producto");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, -1, -1));
 
         jLabel2.setText("Precio");
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
-        jPanel2.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 127, -1));
+
+        txtPrecio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPrecioActionPerformed(evt);
+            }
+        });
+        jPanel2.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 127, -1));
 
         jLabel3.setText("Tipo de producto");
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 80, -1, -1));
 
         jLabel4.setText("Codigo del producto");
         jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
-        jPanel2.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 221, -1));
+        jPanel2.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 221, -1));
 
         jLabel5.setText("Cantidad");
         jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, -1, -1));
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                txtCantidadActionPerformed(evt);
             }
         });
-        jPanel2.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 100, 80, -1));
+        jPanel2.add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 100, 80, -1));
 
         jLabel6.setText("Observación");
         jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
@@ -91,22 +141,26 @@ public class Productos extends javax.swing.JFrame {
         jLabel7.setText("Categoria");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, -1, -1));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un tipo" }));
-        jPanel2.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, 220, -1));
-        jPanel2.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 626, -1));
-
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Normal");
-        jPanel2.add(jRadioButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 100, -1, -1));
-
-        buttonGroup1.add(jRadioButton4);
-        jRadioButton4.setText("Especial");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        cbTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                cbTipoActionPerformed(evt);
             }
         });
-        jPanel2.add(jRadioButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, -1, -1));
+        jPanel2.add(cbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, 220, -1));
+        jPanel2.add(txtObservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 626, -1));
+
+        buttonGroup1.add(rbNormal);
+        rbNormal.setText("Normal");
+        jPanel2.add(rbNormal, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 100, -1, -1));
+
+        buttonGroup1.add(rbEspecial);
+        rbEspecial.setText("Especial");
+        rbEspecial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbEspecialActionPerformed(evt);
+            }
+        });
+        jPanel2.add(rbEspecial, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 648, 190));
 
@@ -118,31 +172,94 @@ public class Productos extends javax.swing.JFrame {
         });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 200, -1, -1));
 
-        jButton2.setText("Guardar");
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, -1, -1));
+        jButton2.setText("Crear");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 80, -1));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 660, 230));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
-
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+    }//GEN-LAST:event_txtCantidadActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        BusquedaProductos b = new BusquedaProductos();
         dispose();
-        b.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoActionPerformed
+        
+    }//GEN-LAST:event_cbTipoActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Controlador.ControladorProductos p = new ControladorProductos();
+        String codigo = txtCodigo.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String precioStr = txtPrecio.getText().trim();
+        String cantidadStr = txtCantidad.getText().trim();
+        TipoProducto tipo = (TipoProducto) cbTipo.getSelectedItem(); 
+        String observacion = txtObservacion.getText().trim();
+
+        // Validación que todos los cambios esten con información.
+        if (codigo.isEmpty() || nombre.isEmpty() || precioStr.isEmpty() || cantidadStr.isEmpty() || tipo == null || observacion.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Debe llenar todos los campos para guardar el producto.");
+            return;
+        }
+        try { //Segunda validacion de precio y categoria para poder enviar los datos.
+            float precio = Float.parseFloat(precioStr); //cambio de tipo String a flaot después de validar
+            int cantidad = Integer.parseInt(cantidadStr); //cambio de tipo String a entero después de validar
+            if(precio < 0 || cantidad < 0){
+                JOptionPane.showMessageDialog(null,"Precio y cantidad no pueden ser negativos.");
+                return;
+            }
+            int idTipo = tipo.getId(); //obtengo el idTipo para la tabla.
+            String categoria; //creo variable categoria
+            if(rbNormal.isSelected()){
+                categoria = "Normal"; //Envio si esta seleccionada normal
+            } else if(rbEspecial.isSelected()){
+                categoria = "Especial"; //Envio si esta seleccionada especial
+            }else{
+                JOptionPane.showMessageDialog(null, "Debe seleccionar una categoría"); //Sino tiene categoria seleccionada salta error.
+                return;
+            }
+            p.Agregar_Editar_Producto(codigo, nombre, precio, cantidad, idTipo, categoria, observacion, editar); //Envio los datos a la funcion "AgregarProducto"
+            limpiar();
+            if(editar){
+                dispose();
+            }
+        }catch (NumberFormatException  e) { //En caso de error entra aqui.
+            JOptionPane.showMessageDialog(null, "Precio y cantidad deben ser valores numéricos válidos."); 
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPrecioActionPerformed
+
+    private void rbEspecialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEspecialActionPerformed
+        if(rbEspecial.isSelected()){
+            rbEspecial.setSelected(false);
+        }
+    }//GEN-LAST:event_rbEspecialActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    
+    public void MostrarCombo(){
+        TipoProductoDAO dao=new TipoProductoDAO();
+        cbTipo.removeAllItems(); //Limpiamos registros
+        for(TipoProducto tipo : dao.ListarTipos()){ //Recorremos todos los resultados
+            cbTipo.addItem(tipo);
+        }
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -162,14 +279,14 @@ public class Productos extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Productos().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Productos(false).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<TipoProducto> cbTipo;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -179,12 +296,12 @@ public class Productos extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JRadioButton rbEspecial;
+    private javax.swing.JRadioButton rbNormal;
+    private javax.swing.JTextField txtCantidad;
+    public javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtObservacion;
+    private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 }

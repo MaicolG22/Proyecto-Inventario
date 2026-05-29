@@ -25,7 +25,7 @@ public class ControladorLogin { //Controlador LOGIN
         u.setContraseña(vista.getContraseña()); //Obtenemos la contraseña de la vista y la enviamos a la clase
         boolean acceso = dao.validarLogin(u); //Enviamos los datos y obtenemos true/false para dar acceso o no.
         if(acceso){ //Si es verdadero abre el menu
-            Menu m = new Menu(); //Llamamos el formulario
+            Menu m = new Menu(u.getTipo()); //Llamamos el formulario
             m.setVisible(true); //Lo ponemos visible
             vista.dispose(); //Cerramos el actual
         }else{ //Si es falso, mostramos el mensaje

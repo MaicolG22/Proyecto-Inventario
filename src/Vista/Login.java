@@ -82,6 +82,12 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/elegante.png"))); // NOI18N
         jLabel2.setText("Contraseña:");
         jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 220, -1, -1));
+
+        txtContraseña.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtContraseñaActionPerformed(evt);
+            }
+        });
         jPanel3.add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, 200, -1));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/apreton-de-manos.png"))); // NOI18N
@@ -139,8 +145,12 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
-        // TODO add your handling code here:
+        jButton1.doClick();
     }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void txtContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContraseñaActionPerformed
+        jButton1.doClick();
+    }//GEN-LAST:event_txtContraseñaActionPerformed
 
     /**
      * @param args the command line arguments

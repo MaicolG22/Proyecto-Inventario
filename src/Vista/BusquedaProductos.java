@@ -4,6 +4,14 @@
  */
 package Vista;
 
+import Controlador.ControladorProductos;
+import Modelo.Producto;
+import Modelo.TipoProducto;
+import Modelo.TipoProductoDAO;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author USUARIO
@@ -17,9 +25,23 @@ public class BusquedaProductos extends javax.swing.JFrame {
      */
     public BusquedaProductos() {
         initComponents();
+        MostrarCombo();
         setTitle("Inventra | Busqueda Productos | ");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
+    }
+    
+    public void MostrarCombo(){
+        TipoProductoDAO dao=new TipoProductoDAO();
+        cbTipo.removeAllItems(); //Limpiamos registros
+        TipoProducto todos = new TipoProducto();
+        todos.setId(0);
+        todos.setNombre("Todos");
+        cbTipo.addItem(todos);
+        for(TipoProducto tipo : dao.ListarTipos()){ //Recorremos todos los resultados
+            cbTipo.addItem(tipo);
+        }
     }
 
     /**
@@ -38,15 +60,18 @@ public class BusquedaProductos extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtCodigo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbTipo = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jButton5 = new javax.swing.JButton();
+        rbNormal = new javax.swing.JRadioButton();
+        rbEspecial = new javax.swing.JRadioButton();
+        jLabel4 = new javax.swing.JLabel();
+        rbTodos = new javax.swing.JRadioButton();
+        cbEstado = new javax.swing.JComboBox<>();
+        btnBuscar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -70,38 +95,80 @@ public class BusquedaProductos extends javax.swing.JFrame {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setText("Nombre producto");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 20, -1, -1));
-        jPanel2.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 40, 300, -1));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 20, 130, -1));
 
-        jLabel2.setText("Codigo producto");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
-        jPanel2.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 150, -1));
-
-        jLabel3.setText("Tipo");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 20, -1, -1));
-
-        jPanel2.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, 170, -1));
-
-        jLabel7.setText("Categoria");
-        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 20, -1, -1));
-
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Normal");
-        jPanel2.add(jRadioButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 42, -1, -1));
-
-        buttonGroup1.add(jRadioButton4);
-        jRadioButton4.setText("Especial");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                txtNombreActionPerformed(evt);
             }
         });
-        jPanel2.add(jRadioButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 42, -1, -1));
+        jPanel2.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 40, 420, -1));
 
-        jButton5.setText("Buscar");
-        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 70, 80, -1));
+        jLabel2.setText("Codigo producto");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 110));
+        txtCodigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCodigoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(txtCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 160, -1));
+
+        jLabel3.setText("Estado");
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 20, -1, -1));
+
+        cbTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTipoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(cbTipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 90, 200, -1));
+
+        jLabel7.setText("Categoria");
+        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, -1, -1));
+
+        buttonGroup1.add(rbNormal);
+        rbNormal.setText("Normal");
+        rbNormal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbNormalActionPerformed(evt);
+            }
+        });
+        jPanel2.add(rbNormal, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 92, -1, -1));
+
+        buttonGroup1.add(rbEspecial);
+        rbEspecial.setText("Especial");
+        rbEspecial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbEspecialActionPerformed(evt);
+            }
+        });
+        jPanel2.add(rbEspecial, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 92, -1, -1));
+
+        jLabel4.setText("Tipo");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, -1, -1));
+
+        buttonGroup1.add(rbTodos);
+        rbTodos.setText("Todos");
+        jPanel2.add(rbTodos, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 92, -1, -1));
+
+        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS", "ACTIVO", "INACTIVO" }));
+        cbEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbEstadoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(cbEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 40, 140, -1));
+
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 90, 110, -1));
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 810, 130));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Listado"));
 
@@ -110,9 +177,19 @@ public class BusquedaProductos extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Codigo", "Nombre", "Tipo", "Categoria"
+                "Codigo", "Nombre", "Precio", "Cantidad", "Valor Total", "Tipo", "Categoria", "Observación", "Estado"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -121,18 +198,18 @@ public class BusquedaProductos extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 798, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(12, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 820, 240));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 810, 280));
 
         jButton1.setText("Regresar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -140,7 +217,7 @@ public class BusquedaProductos extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 400, 80, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 465, 100, -1));
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/agregar.png"))); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -148,7 +225,7 @@ public class BusquedaProductos extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 112, 35, -1));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 35, -1));
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/editar.png"))); // NOI18N
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -156,7 +233,7 @@ public class BusquedaProductos extends javax.swing.JFrame {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 112, 35, -1));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 35, -1));
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/eliminar.png"))); // NOI18N
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -164,27 +241,39 @@ public class BusquedaProductos extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 112, 35, -1));
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 140, 35, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 440));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 810, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    private void rbEspecialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEspecialActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+    }//GEN-LAST:event_rbEspecialActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Productos p=new Productos();
-        this.setVisible(false);
+        Productos p=new Productos(false);
         p.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Productos p=new Productos();
-        this.setEnabled(false);
-        p.setVisible(true);
+        int fila = jTable1.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un producto para editar");
+            return;
+        }
+        Producto pro = new Producto();
+        pro.setCodigo((String) jTable1.getValueAt(fila, 0));
+        pro.setNombre((String) jTable1.getValueAt(fila, 1));
+        pro.setPrecio(Double.parseDouble(jTable1.getValueAt(fila, 2).toString()));
+        pro.setCantidad(Integer.parseInt(jTable1.getValueAt(fila, 3).toString()));
+        pro.setTiponombre((String) jTable1.getValueAt(fila, 4));
+        pro.setCategoria((String) jTable1.getValueAt(fila, 5));
+        pro.setObservacion((String) jTable1.getValueAt(fila, 6));
+        Productos p=new Productos(true);
+        p.cargarProducto(pro); //envio los parametros de la selección.
+        p.setVisible(true);        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -192,8 +281,82 @@ public class BusquedaProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        
+        int fila = jTable1.getSelectedRow();
+        if(fila == -1){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un producto para eliminar");
+            return;
+        }
+        int respuesta = JOptionPane.showConfirmDialog(null,"¿Está seguro que desea eliminar el producto seleccionado?","Confirmar eliminación",JOptionPane.YES_NO_OPTION);
+        if(respuesta != JOptionPane.YES_OPTION){
+            return;
+        }
+        Controlador.ControladorProductos cp = new ControladorProductos();
+        String Codigo = (String) jTable1.getValueAt(fila, 0);
+        cp.EliminarProducto(Codigo);
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void cbTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTipoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbTipoActionPerformed
+
+    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
+        btnBuscar.doClick();
+    }//GEN-LAST:event_txtCodigoActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        Controlador.ControladorProductos p=new ControladorProductos();
+        String codigo = txtCodigo.getText(); 
+        String nombre = txtNombre.getText(); 
+        
+        int tipo = 0;
+        if(cbTipo.getSelectedIndex() != 0){
+            TipoProducto t = (TipoProducto) cbTipo.getSelectedItem(); 
+            tipo = t.getId(); 
+        }
+        
+        String categoria = ""; 
+        if(rbNormal.isSelected()){
+            categoria = "Normal"; 
+        } 
+        if(rbEspecial.isSelected()){
+            categoria = "Especial"; 
+        } 
+        String estado = "";
+        if(cbEstado.getSelectedIndex()!=0){
+            estado = (String) cbEstado.getSelectedItem();
+        }
+        List<Producto> lista = p.BuscarProducto(codigo, nombre, tipo, categoria, estado);
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        for(Producto pro : lista){
+            String total = String.format("%.2f", pro.getPrecio() * pro.getCantidad());
+            Object[] fila = {
+                pro.getCodigo(),
+                pro.getNombre(),
+                pro.getPrecio(),
+                pro.getCantidad(),
+                total,
+                pro.getTiponombre(),
+                pro.getCategoria(),
+                pro.getObservacion(),
+                pro.getEstado()
+            };
+            modelo.addRow(fila);
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void rbNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNormalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbNormalActionPerformed
+
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        btnBuscar.doClick();
+    }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void cbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEstadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbEstadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -221,16 +384,18 @@ public class BusquedaProductos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBuscar;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> cbEstado;
+    private javax.swing.JComboBox<TipoProducto> cbTipo;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -238,11 +403,12 @@ public class BusquedaProductos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JRadioButton rbEspecial;
+    private javax.swing.JRadioButton rbNormal;
+    private javax.swing.JRadioButton rbTodos;
+    private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
 }
